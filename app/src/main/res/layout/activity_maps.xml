@@ -1,0 +1,60 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Timer TextView -->
+    <TextView
+        android:id="@+id/timerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:text="00:00:00" />
+
+    <!-- Score counter TextView -->
+    <TextView
+        android:id="@+id/scoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="10dp"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:text="Score: 0" />
+
+    <!-- Your map fragment or other map-related views here -->
+    <Button
+        android:id="@+id/saveLocationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:layout_alignBottom="@id/map"
+        android:text="Add Point"
+        android:backgroundTint="@color/cardview_dark_background"/>
+    <Button
+        android:id="@+id/drawPolylineButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@id/map"
+        android:text="Draw shape"
+        android:backgroundTint="@color/teal_700"/>
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/timerTextView" />
+
+</RelativeLayout>

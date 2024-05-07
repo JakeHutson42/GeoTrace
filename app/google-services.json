@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "108718370673",
+    "project_id": "first-project-c63cd",
+    "storage_bucket": "first-project-c63cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108718370673:android:9fa220f665d82009ee90d0",
+        "android_client_info": {
+          "package_name": "com.example.geotrace"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6v96vS5JjOzfoVdsfG-PU9WbfQBIswVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
