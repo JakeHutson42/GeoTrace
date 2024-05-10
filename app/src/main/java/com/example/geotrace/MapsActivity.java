@@ -96,7 +96,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        // Initialize MediaPlayer with background music file, set the track to loop when it is finished and start playing
+        // Initialize MediaPlayer with background music file, set it to loop  and start playing
         mediaPlayer = MediaPlayer.create(this, R.raw.backgroundmusic);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
@@ -127,7 +127,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             userLocations.add(currentLocation);
                             originalLocation = currentLocation;
 
-                            // Added markers in order to see that the add point button is functioning correctly remove for submission
+                            // Added markers in order to see that the add point button is
+                            // functioning correctly -  remove for submission
                             //mMap.addMarker(new MarkerOptions().position(currentLocation).title("Saved Location"));
 
                             if (polyline != null) {
@@ -171,7 +172,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         // Check if the current location is within the radius of the original location,
-        if (originalLocation != null && isWithinRadius(originalLocation, userLocations.get(userLocations.size() - 1), RADIUS_THRESHOLD)) {
+        if (originalLocation != null && isWithinRadius(originalLocation, userLocations.get(userLocations.size() - 1),
+                RADIUS_THRESHOLD)) {
             if (polyline != null) {
                 polyline.remove();
             }
@@ -223,7 +225,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Method to calculate the points awarded based on the area of the drawn shape
     private double calculatePoints(ArrayList<LatLng> points) {
         double area = calculateArea(points);
-        double pointsAwarded = area * POINTS_PER_SQUARE_METER;    // Calculate the points awarded based on the area
+        double pointsAwarded = area * POINTS_PER_SQUARE_METER;
         pointsAwarded = Math.round(pointsAwarded * 100.0) / 100.0;
         return pointsAwarded;
     }
@@ -313,7 +315,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
