@@ -11,17 +11,15 @@
         android:src="@drawable/splashscreen"
         tools:ignore="ContentDescription" />
 
-    <TextView
+    <ImageView
         android:id="@+id/textTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120sp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50sp"
+        android:layout_marginBottom="500sp"
         android:layout_centerHorizontal="true"
-        android:fontFamily="sans-serif"
-        android:text="Geo Trace"
-        android:textColor="@android:color/background_dark"
-        android:textSize="56sp"
-        android:textStyle="bold" />
+        android:src="@drawable/titletext"
+        tools:ignore="ContentDescription" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -31,8 +29,9 @@
         android:layout_below="@id/textTitle"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="480dp"
+        android:layout_marginTop="-40dp"
         android:indeterminate="false"
         android:max="100"
         android:progress="0" />
+
 </RelativeLayout>

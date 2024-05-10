@@ -78,18 +78,15 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Login successful, navigate to main activity
                             startActivity(new Intent(LoginActivity.this, MapsActivity.class));
                             finish();
                         } else {
-                            // Login failed, display a message to the user
                             Toast.makeText(LoginActivity.this, "Incorrect Username or Password", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
-    //Handle saving a users entered information for when the application is next started up
     private void saveLoginInformation(String email, String password) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("savedLogin", true);

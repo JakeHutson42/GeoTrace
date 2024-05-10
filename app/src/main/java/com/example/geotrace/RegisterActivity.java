@@ -27,8 +27,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
-
         Button buttonRegister = findViewById(R.id.buttonRegister);
+
         buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,11 +55,9 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Registration successful, navigate to main activity
                             startActivity(new Intent(RegisterActivity.this, MapsActivity.class));
                             finish();
                         } else {
-                            // Registration failed, display a message to the user
                             Toast.makeText(RegisterActivity.this, "Registration failed", Toast.LENGTH_SHORT).show();
                         }
                     }

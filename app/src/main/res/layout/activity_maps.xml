@@ -2,7 +2,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Timer TextView -->
     <TextView
         android:id="@+id/timerTextView"
         android:layout_width="wrap_content"
@@ -16,7 +15,6 @@
         android:textColor="#FFFFFF"
         android:text="00:00:00" />
 
-    <!-- Score counter TextView -->
     <TextView
         android:id="@+id/scoreTextView"
         android:layout_width="wrap_content"
@@ -31,7 +29,6 @@
         android:textColor="#FFFFFF"
         android:text="Score: 0" />
 
-    <!-- Your map fragment or other map-related views here -->
     <Button
         android:id="@+id/saveLocationButton"
         android:layout_width="wrap_content"

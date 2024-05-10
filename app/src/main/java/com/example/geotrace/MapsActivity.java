@@ -51,21 +51,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Handler handler = new Handler();
     private Runnable runnable;
 
-    // Declare the fused location client
+    // Fused location client
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
 
-    // Declare Polyline variables
+    // Polyline and polygon related variables
     private PolylineOptions polylineOptions;
     private Polyline polyline;
     private ArrayList<LatLng> userLocations = new ArrayList<>();
     private Button saveLocationButton;
-    private static final double POINTS_PER_SQUARE_METER = 0.1; // You can adjust this value as needed
+    private static final double POINTS_PER_SQUARE_METER = 0.5;
 
+    // Radius detection variables
+    private LatLng originalLocation;
+    private static final double RADIUS_THRESHOLD = 50;
 
-    private LatLng originalLocation; // Variable to store the original location
-    private static final double RADIUS_THRESHOLD = 100; // Define your radius threshold in meters
-
+    // Media player variables
     private MediaPlayer mediaPlayer;
 
     // Create the map view, initialise timer and initialise the fused locator method.
@@ -74,67 +75,60 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        // Find the save location button by its ID
         saveLocationButton = findViewById(R.id.saveLocationButton);
-
-        // Set an OnClickListener to the save location button and call polyline
         saveLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Call a method to save the current location
                 saveCurrentLocation();
             }
         });
         Button drawPolylineButton = findViewById(R.id.drawPolylineButton);
-
         drawPolylineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawPolyline();
+                drawPolygon();
             }
         });
 
-
         timerTextView = findViewById(R.id.timerTextView);
-
+        //Display the map within the map fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         // Initialize MediaPlayer with background music file, set the track to loop when it is finished and start playing
         mediaPlayer = MediaPlayer.create(this, R.raw.backgroundmusic);
-        mediaPlayer.setLooping(true); // Set looping to true
-        mediaPlayer.start(); // Start playing background music
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     private void saveCurrentLocation() {
-        // Check for location permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Request location permission if not granted
+        if (ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED)
+        {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
         }
 
-        // Get the last known location
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
-                            // Add the current location to the userLocations array
                             LatLng currentLocation = new LatLng(
                                     location.getLatitude(),
                                     location.getLongitude());
                             userLocations.add(currentLocation);
                             originalLocation = currentLocation;
 
-                            // Added markers in order to see that the add point button is functioning correctly
-                            mMap.addMarker(new MarkerOptions().position(currentLocation).title("Saved Location"));
+                            // Added markers in order to see that the add point button is functioning correctly remove for submission
+                            //mMap.addMarker(new MarkerOptions().position(currentLocation).title("Saved Location"));
 
                             if (polyline != null) {
                                 polyline.remove();
@@ -142,8 +136,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             // Create PolylineOptions to define the polylines visual properties
                             polylineOptions = new PolylineOptions();
-                            polylineOptions.color(Color.BLUE); // Set color of the polyline
-                            polylineOptions.width(10); // Set width of the polyline
+                            polylineOptions.color(Color.BLUE);
+                            polylineOptions.width(10);
 
                             // Add each point in userLocations to the polyline
                             for (LatLng latLng : userLocations) {
@@ -152,10 +146,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             // Add the polyline to the map
                             polyline = mMap.addPolyline(polylineOptions);
-                            // Display a toast message indicating that the location is saved
-                            Toast.makeText(MapsActivity.this, "Location saved" + location, Toast.LENGTH_LONG).show();
+                            // Display a toast message indicating that the location is saved for testing purposes
+                            //Toast.makeText(MapsActivity.this, "Location saved" + location, Toast.LENGTH_LONG).show();
                         } else {
-                            // If location is null, display a message indicating that location is not available
+                            // If location is null, display a message indicating that location is not available for testing purposes
                             Toast.makeText(MapsActivity.this, "Location not available", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -170,24 +164,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // polygon using the stored locations instead of a polyline.
     // Otherwise, it will draw a polyline as before.
 
-    private void drawPolyline() {
+    private void drawPolygon() {
         if (userLocations.size() < 3) {
             Toast.makeText(this, "At least three locations are required to draw a shape.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Check if the user is not null and is within the radius of the original location,
-        // check the saved user locations array
-        
+        // Check if the current location is within the radius of the original location,
         if (originalLocation != null && isWithinRadius(originalLocation, userLocations.get(userLocations.size() - 1), RADIUS_THRESHOLD)) {
-            // Clear existing polyline or polygon
             if (polyline != null) {
                 polyline.remove();
             }
 
-            // Create PolygonOptions to define polygon properties
+            // Create PolygonOptions object to define polygon properties
             PolygonOptions polygonOptions = new PolygonOptions();
-            polygonOptions.strokeColor(Color.RED); // Set stroke color of the polygon
+            polygonOptions.strokeColor(Color.RED);
             polygonOptions.fillColor(Color.argb(128, 255, 0, 0)); // Set fill color of the polygon
 
             // Add each point in userLocations to the polygon
@@ -195,70 +186,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 polygonOptions.add(latLng);
             }
 
-            // Add the polygon to the map
             mMap.addPolygon(polygonOptions);
 
-            // Calculate the area of the drawn shape
             double area = calculateArea(userLocations);
 
-            // Clear existing shapes on the map
             mMap.clear();
 
-            // Calculate the points awarded based on the drawn shape
             double pointsAwarded = calculatePoints(userLocations);
 
-            // Update the scoreTextView with the new score
             TextView scoreTextView = findViewById(R.id.scoreTextView);
             scoreTextView.setText(String.format("Score: %.2f", pointsAwarded));
 
-            // Display the points awarded to the user
             Toast.makeText(this, "Points awarded: " + pointsAwarded, Toast.LENGTH_SHORT).show();
 
-            // Clear the old shape
             userLocations.clear();
         } else {
-            // Handle drawing polyline if needed
+            Toast.makeText(this, "An error has occurred when drawing the polygon", Toast.LENGTH_SHORT).show();
         }
     }
 
     // Method to calculate the area of a polygon
     private double calculateArea(ArrayList<LatLng> points) {
-        // Convert LatLng points to com.google.android.gms.maps.model.LatLng points
         List<LatLng> mapPoints = new ArrayList<>();
         for (LatLng point : points) {
             mapPoints.add(new com.google.android.gms.maps.model.LatLng(point.latitude, point.longitude));
         }
-
-        // Create a PolygonOptions object
         PolygonOptions polygonOptions = new PolygonOptions();
         for (com.google.android.gms.maps.model.LatLng latLng : mapPoints) {
             polygonOptions.add(latLng);
         }
-
-        // Create a Polygon object
         Polygon polygon = mMap.addPolygon(polygonOptions);
-
-        // Calculate the area of the polygon
         return SphericalUtil.computeArea(polygon.getPoints());
     }
 
     // Method to award points based on the area of the shape
-// Method to calculate the points awarded based on the area of the drawn shape
+    // Method to calculate the points awarded based on the area of the drawn shape
     private double calculatePoints(ArrayList<LatLng> points) {
-        // Calculate the area of the drawn shape
         double area = calculateArea(points);
-
-        // Calculate the points awarded based on the area
-        double pointsAwarded = area * POINTS_PER_SQUARE_METER;
-
-        // Round the points to two decimal places
+        double pointsAwarded = area * POINTS_PER_SQUARE_METER;    // Calculate the points awarded based on the area
         pointsAwarded = Math.round(pointsAwarded * 100.0) / 100.0;
-
         return pointsAwarded;
     }
 
 
-    // Method to check if a point is within a certain radius of another point
+    // Method to check if a set point is within a certain radius of another point
     private boolean isWithinRadius(LatLng center, LatLng point, double radius) {
         double distance = SphericalUtil.computeDistanceBetween(center, point);
         return distance <= radius;
@@ -273,7 +244,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
@@ -281,10 +253,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setMyLocationEnabled(true);
 
-        // Start location updates
         startLocationUpdates();
 
-        // Start the timer
         startTimer();
 
     }
@@ -293,17 +263,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onPause();
         // Pause or stop the MediaPlayer when the activity is paused
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.pause(); // Pause the MediaPlayer
+            mediaPlayer.pause();
         }
-
-        // Check if the screen is locked and stop the background music
+        // Check if the screen is locked and stop the background music if it is
         KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         if (keyguardManager != null && keyguardManager.isKeyguardLocked()) {
-            // Stop the background music if the screen is locked
-//            stopBackgroundMusic();
             mediaPlayer.pause();
         }
     }
+
     // Fix for the problem of the music continuing after the screen is locked or
     // the applicatoin is minimised. Call onResume to check if media player has been
     // initiated, was playing, and if it has, resume the track
@@ -313,7 +281,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Check if the MediaPlayer was playing before the activity was paused
         // If it was playing, resume playing the music
         if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
-            mediaPlayer.start(); // Resume playing the MediaPlayer
+            mediaPlayer.start();
         }
     }
 
@@ -328,17 +296,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 if (locationResult != null) {
-                    //Check a users latitude and longitude
                     Location location = locationResult.getLastLocation();
                     LatLng currentLocation = new LatLng(
                             location.getLatitude(),
                             location.getLongitude());
 
-                    // Set user location the zoom level and pitch angle
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(currentLocation)
-                            .zoom(17) // Set zoom level
-                            .tilt(45) // Set pitch angle (in degrees)
+                            .zoom(17)
+                            .tilt(45) // angle (in degrees)
                             .build();
 
                     // Update the camera view
@@ -364,7 +330,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 int minutes = (secondsPassed % 3600) / 60;
                 int seconds = secondsPassed % 60;
                 timerTextView.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
-                handler.postDelayed(this, 1000); // Run this runnable every second
+                handler.postDelayed(this, 1000);
             }
         };
         handler.post(runnable); // Start the timer runnable
@@ -376,10 +342,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Remove the callback to prevent memory leaks
         handler.removeCallbacks(runnable);
 
-        // Stop location updates
         stopLocationUpdates();
 
-        // Stop and release MediaPlayer when activity is destroyed
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();

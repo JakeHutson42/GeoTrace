@@ -16,7 +16,6 @@ public class SplashActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private int progress = 0;
 
-    // Start activity and progress bar, start loading.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,11 +27,6 @@ public class SplashActivity extends AppCompatActivity {
         startLoading();
     }
 
-
-    // Initialise progress bar loading and increment loading points.
-    // Check if the loading bar is at max progress and if not increment it,
-    // else start the login activity.
-
     private void startLoading() {
         final Handler handler = new Handler(getMainLooper()) {
             @Override
@@ -42,7 +36,6 @@ public class SplashActivity extends AppCompatActivity {
                     progress++;
                     sendEmptyMessageDelayed(0, PROGRESS_DELAY);
                 } else {
-                    // Progress completed, start the next activity
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                     finish();
                 }
